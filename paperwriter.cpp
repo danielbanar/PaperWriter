@@ -10,8 +10,8 @@ void PaperWriter::Init()
 void PaperWriter::RenderUI()
 {
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+	//ImGui::ShowDemoWindow();
 	ImGui::Begin("Properties");
-
 	static std::string sText;
 	ImGui::InputText("text", &sText);
 
@@ -46,7 +46,7 @@ void PaperWriter::RenderUI()
 	ImGui::End();
 
 	/*********************************************************************************/
-	ImGui::Begin("Paper");
+	ImGui::Begin("Paper",nullptr, ImGuiWindowFlags_HorizontalScrollbar);
 	ImGui::Image(texPaper, { surfPaper->w * fZoom,surfPaper->h * fZoom });
 	ImGui::End();
 	/*********************************************************************************/
