@@ -82,9 +82,7 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(1.f, 1.f, 1.f, 1.f);
 
-
-    SDL_Surface* surfExample = IMG_Load("example.jpg");
-    auto texture = SDL_CreateTextureFromSurface(renderer, surfExample);
+    PaperWriter::Init();
 
     // Main loop
     bool done = false;
