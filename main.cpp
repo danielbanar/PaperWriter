@@ -117,6 +117,7 @@ int main(int, char**)
 
         ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
         SDL_RenderPresent(renderer);
+        PaperWriter::DetectChanges();
     }
 
     // Cleanup

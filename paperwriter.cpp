@@ -1,7 +1,7 @@
 #include "paperwriter.h"
 #include "imgui_stdlib.h"
 #include <algorithm>
-
+SDL_Texture* texPaper;
 extern SDL_Renderer* renderer;
 void PaperWriter::Init()
 {
@@ -10,7 +10,6 @@ void PaperWriter::Init()
 void PaperWriter::RenderUI()
 {
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-
 	ImGui::Begin("Properties");
 
 	static std::string sText;
@@ -38,26 +37,19 @@ void PaperWriter::RenderUI()
 
 	/*********************************************************************************/
 
-
 	ImGui::Begin("Controls");
 	static float fZoom = 1.f;
-	static SDL_Texture* texPaper;
 	ImGui::SliderFloat("Zoom", &fZoom, 0.05f, 1.f, "%.2f");
-	if (ImGui::Button("Refresh Paper"))
-	{
-		RedrawPaper();
-		if (texPaper)
-			SDL_DestroyTexture(texPaper);
-		texPaper = SDL_CreateTextureFromSurface(renderer, surfPaper);
-	}
-		ImGui::End();
+
+	if (ImGui::Button("Export to file"))
+		SDL_SaveBMP(surfPaper, "paper.bmp");
+	ImGui::End();
 
 	/*********************************************************************************/
 	ImGui::Begin("Paper");
 	ImGui::Image(texPaper, { surfPaper->w * fZoom,surfPaper->h * fZoom });
 	ImGui::End();
 	/*********************************************************************************/
-
 }
 void PaperWriter::AddText(const std::string& text, ImVec2 pos, float textSize)
 {
@@ -66,10 +58,6 @@ void PaperWriter::AddText(const std::string& text, ImVec2 pos, float textSize)
 void PaperWriter::AddText(const std::string& text, float x, float y, float textSize)
 {
 	PaperWriter::vTexts.push_back({ text, {x, y}, textSize });
-}
-void PaperWriter::EditText(int index, std::string newText)
-{
-	PaperWriter::vTexts[index].text = newText;
 }
 SDL_Surface* PaperWriter::CreateSurfaceFromText(const Text& text)
 {
@@ -120,5 +108,22 @@ void PaperWriter::RedrawPaper()
 		SDL_Rect rect = { text.pos.x,text.pos.y,surfText->w,surfText->h };
 		SDL_BlitSurface(surfText, nullptr, surfPaper, &rect);
 		SDL_FreeSurface(surfText);
+	}
+}
+void PaperWriter::DetectChanges()
+{
+	bool update = false;
+	for (Text& text : vTexts)
+	{
+		if (!(text == text.lastState))	//TODO: operator overload
+			update = true;
+		text.lastState = std::make_tuple( text.text,text.pos,text.size);
+	}
+	if (update)
+	{
+		RedrawPaper();
+		if (texPaper)
+			SDL_DestroyTexture(texPaper);
+		texPaper = SDL_CreateTextureFromSurface(renderer, surfPaper);
 	}
 }

@@ -180,6 +180,7 @@
   <ItemGroup>
     <None Include="..\imgui\misc\debuggers\imgui.natvis" />
     <None Include="..\README.txt" />
+    <None Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="example.jpg" />
